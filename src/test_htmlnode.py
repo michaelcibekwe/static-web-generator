@@ -1,17 +1,25 @@
 import unittest
-from htmlnode import HTMLNode, LeafNode
+from htmlnode import ParentNode, LeafNode
 
 
 class TestHTMLNode(unittest.TestCase):
-    def test_leaf_to_html_p(self):
-        node = LeafNode("p", "Hello, world!")
-        self.assertEqual(node.to_html(), "<p>Hello, world!</p>")
-    def test_leaf_to_html_a(self):
-        node2 = LeafNode("a", "Click me!", {"href": "https://www.google.com"})
-        print(node2.props_to_html())
-        self.assertEqual(node2.to_html(), '<a href="https://www.google.com">Click me!</a>')
-    def test_leaf_to_html_p(self):
-        node = LeafNode(None, "Hello, world!")
-        self.assertEqual(node.to_html(), "Hello, world!")
+    def test_to_html_with_children(self):
+        child_node = LeafNode("span", "child")
+        parent_node = ParentNode("div", [child_node])
+        self.assertEqual(parent_node.to_html(), "<div><span>child</span></div>")
+
+
+    def test_to_html_with_grandchildren(self):
+        grandchild_node = LeafNode("b", "grandchild")
+        child_node = ParentNode("span", [grandchild_node])
+        parent_node = ParentNode("div", [child_node])
+        self.assertEqual(
+            parent_node.to_html(),
+            "<div><span><b>grandchild</b></span></div>",
+        )
+    def test_to_html_with_no_children(self):
+        parent_node = ParentNode("p", None)
+        with self.assertRaisesRegex(ValueError, "No children found"):
+            parent_node.to_html()
 if __name__ == "__main__":
     unittest.main()

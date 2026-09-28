@@ -1,5 +1,5 @@
 class HTMLNode:
-    def __init__(self, tag=None, value=None, children:list[HTMLNode]=None, props:dict = {"key": "value"}):
+    def __init__(self, tag=None, value=None, children:list[HTMLNode]=None, props:dict=None):
         self.tag = tag
         self.value = value
         self.children = children
@@ -21,3 +21,14 @@ class HTMLNode:
         print(f"Value: {self.value}")
         print(f"Children: {self.children}")
         print(f"Props: {self.props}")
+
+class LeafNode(HTMLNode):
+    def __init__(self, tag, value, props:dict=None):
+        super().__init__(tag, value, None, props)
+
+    def to_html(self):
+        if self.value == None:
+            raise ValueError("No value detected")
+        if self.tag == None:
+            return self.value
+        return f'<{self.tag}{self.props_to_html()}>{self.value}</{self.tag}>'
